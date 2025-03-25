@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
             _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
 
             _playerCamera.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
-            //transform.Rotate(Vector3.up*mouseX);
+            transform.Rotate(Vector3.up*mouseX);
             transform.rotation *= Quaternion.Euler(0, mouseX, 0);
         }
     }
