@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.Collections.Generic;
 
 public class PlayImitation : MonoBehaviour
 {
@@ -11,7 +10,6 @@ public class PlayImitation : MonoBehaviour
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
 
-    public Button Startbutton;
     public Button Option1;
     public Button Option2;
     public Button End;
@@ -45,15 +43,7 @@ public class PlayImitation : MonoBehaviour
                 //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
                 foreach (RaycastResult result in results)
                 {
-                    if(result.gameObject.name == Startbutton.name)
-                    {
-                        result.gameObject.GetComponent<Button>().onClick.Invoke();
-                        Debug.Log("Hit " + result.gameObject.name);
-                        timeLeft = cooldown;
-
-                        break;
-                    }
-                    else if(result.gameObject.name == Option1.name)
+                    if(result.gameObject.name == Option1.name)
                     {
                         result.gameObject.GetComponent<Button>().onClick.Invoke();
                         Debug.Log("Hit " + result.gameObject.name);

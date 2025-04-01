@@ -1,4 +1,3 @@
-
 using System; 
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +19,6 @@ public class DialogPresenter : MonoBehaviour
     [SerializeField] private TextAsset[] _dialoguesArr;
     private uint _currentDialogue;
     private DialogNode _currentNode;
-    public Button Start; 
     public Button Next;
 
     [Header("Events")]
@@ -31,6 +29,37 @@ public class DialogPresenter : MonoBehaviour
     [field: SerializeField] public bool CanTalk { get; set; }
     [SerializeField] private DialoguePresenterState _state;
 
+    [field: Header("Interact")]
+    [SerializeField] public GameObject background;
+    [SerializeField] public GameObject NPC;
+    [SerializeField] public Camera mainCam;
+    private GameObject test;
+    private bool flasher = false;
+    private float interactionDistance = 3f;
+
+    void Update()
+    { 
+        Interaction();
+    }
+    void Interaction()
+    {
+        Ray ray = mainCam.ViewportPointToRay(Vector3.one/2f);
+        RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit, interactionDistance))
+        {
+            test = hit.collider.gameObject;
+            if(test == NPC)
+            {
+                if(Input.GetKeyDown(KeyCode.F) && !flasher)
+                {
+                    flasher = !flasher;
+                    background.SetActive(flasher);
+                    StartDialogue();
+                }
+            }
+        }
+    }
 
     public void StartDialogue()
     {
@@ -38,13 +67,12 @@ public class DialogPresenter : MonoBehaviour
             return;
 
         _currentNode = ParseDialogFile.GetDialogTree(_dialoguesArr[_currentDialogue]);
-
         _dialogueView.SetPresenter(this);
         OnDialogueStart?.Invoke();
+        Next.gameObject.SetActive(true);
         CanTalk = false;
         _dialogueView.StartDialogue(_currentNode.Message, _currentNode.Name);
         _state = DialoguePresenterState.Talk;
-        Start.gameObject.SetActive(false);
     }
 
     public void NextMessage()
@@ -103,6 +131,7 @@ public class DialogPresenter : MonoBehaviour
     public void Action0()
     {
         Debug.Log("Первая ветка закончена");
+        flasher = !flasher;
     }
 
     public void Action1()
