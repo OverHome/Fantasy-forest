@@ -894,6 +894,7 @@ MonoBehaviour:
   _dialoguesArr:
   - {fileID: 4900000, guid: ae29afa1b27916a4dbce74507b5ab368, type: 3}
   - {fileID: 4900000, guid: ae29afa1b27916a4dbce74507b5ab368, type: 3}
+  - {fileID: 4900000, guid: ae29afa1b27916a4dbce74507b5ab368, type: 3}
   Next: {fileID: 862979487}
   OnDialogueFinished:
   - m_PersistentCalls:

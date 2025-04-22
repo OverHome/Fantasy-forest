@@ -17,8 +17,8 @@ public class PlayerController : MonoBehaviour
     private CharacterController _characterController;
     private Camera _playerCamera;
 
-    [HideInInspector] public bool canMove = true;
-    [HideInInspector] public bool canModedCamera = true;
+    [HideInInspector] public bool canMove = true; ///< Если игрок может двигаться
+    [HideInInspector] public bool canModedCamera = true; ///< Если камера игрока может двигаться
 
     private void Start()
     {

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class DialogView : MonoBehaviour
 {
-    public event Action OnFinishMessage;
+    public event Action OnFinishMessage; ///< Ивент при вызове финального сообщения в диалоге
 
     [Header("Components")]
     [SerializeField] private TextMeshProUGUI _messageText;
@@ -14,18 +14,18 @@ public class DialogView : MonoBehaviour
     [SerializeField] private GameObject[] _buttons;
     [SerializeField] private TextMeshProUGUI[] _buttonsText;
     private DialogPresenter _dialogPresenter;
-
+    /*! Присваивание переменной говорящего NPC*/
     public void SetPresenter(DialogPresenter presenter)
     {
         _dialogPresenter = presenter;
     }
-
+    /*! Старт диалога*/
     public void StartDialogue(string message, string name)
     {
         _nameText.text = name;
         NewMessage(message);
     }
-
+    /*! Остановка диалога*/
     public void StopDialogue()
     {
         StartCoroutine(Wait());
@@ -42,7 +42,7 @@ public class DialogView : MonoBehaviour
         _nameText.text = "";
         _messageText.text = "";
     }
-
+    /*! Следующие сообщение в диалоговой ветке*/
     public void NextMessage(string message, string name)
     {
         _nameText.text = name;
@@ -53,12 +53,13 @@ public class DialogView : MonoBehaviour
     {
         _messageText.text = text;
     }
-
+    /*! Сокрытие кнопок выбора*/
     public void HideButtons()
     {
         foreach (var button in _buttons)
             button.SetActive(false);
     }
+    /*! Активация кнопок выбора*/
     public void ActivateButtons(List<string> shortNames)
     {
         for (int i = 0; i < shortNames.Count; i++)
@@ -67,11 +68,12 @@ public class DialogView : MonoBehaviour
             _buttonsText[i].text = shortNames[i];
         }
     }
-
+    /*! Финальное сообщение в ветке*/
     private void FinishMessage()
     {
         OnFinishMessage?.Invoke();
     }
+    /*! Функция вызывающаяся после нажатия кнопки выбора*/
     public void ClickOnButtonChoice(int indexButton)
     {
         HideButtons();

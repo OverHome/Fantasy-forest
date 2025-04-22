@@ -4,14 +4,15 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+///Набор все возможных состояний диалога
 enum DialoguePresenterState
 {
-    Await,
-    Talk,
-    Choice,
-    Finish
+    Await, ///< Указывает на ожидание диалога
+    Talk, ///< Указывает что диалог идет
+    Choice, ///< Указывает на выбор в диалоге
+    Finish ///< Указывает на завершение ветки диалога
 }
-
+//Класс, описывающий взаимодействие с диалоговым NPC
 public class DialogPresenter : MonoBehaviour
 {
     [Header("Components")]
@@ -19,29 +20,33 @@ public class DialogPresenter : MonoBehaviour
     [SerializeField] private TextAsset[] _dialoguesArr;
     private uint _currentDialogue;
     private DialogNode _currentNode;
-    public Button Next;
+    public Button Next; ///< Кнопка для продолжение диалога
 
     [Header("Events")]
     [SerializeField] private UnityEvent[] OnDialogueFinished;
-    public event Action OnDialogueStart;
+    public event Action OnDialogueStart; ///< Ивент старта диалога
 
     [field: Header("States")]
-    [field: SerializeField] public bool CanTalk { get; set; }
+    [field: SerializeField] public bool CanTalk { get; set; } ///< Указывает что NPC прямо сейчас говорит
     [SerializeField] private DialoguePresenterState _state;
 
     [field: Header("Interact")]
-    [SerializeField] public GameObject background;
-    [SerializeField] public GameObject NPC;
-    [SerializeField] public Camera mainCam;
+    [SerializeField] public GameObject background; ///< Диалоговое окно
+    [SerializeField] public GameObject NPC; ///< NPC с кем происходит диалог
+    [SerializeField] public Camera mainCam; ///< Камера персонажа
     private GameObject test;
     private bool flasher = false;
     private float interactionDistance = 3f;
-
+    
     void Update()
     { 
         Interaction();
     }
-    void Interaction()
+    /*!
+    Пускается рейкаст, если рейкаст поподает на NPC и
+    находится на определенном расстоянии, то всплывает диалоговое окно
+    */
+    public void Interaction()
     {
         Ray ray = mainCam.ViewportPointToRay(Vector3.one/2f);
         RaycastHit hit;
@@ -60,7 +65,9 @@ public class DialogPresenter : MonoBehaviour
             }
         }
     }
-
+    /*!
+    Действия при старте диалога
+    */
     public void StartDialogue()
     {
         if (_state == DialoguePresenterState.Finish || !CanTalk)
@@ -74,7 +81,9 @@ public class DialogPresenter : MonoBehaviour
         _dialogueView.StartDialogue(_currentNode.Message, _currentNode.Name);
         _state = DialoguePresenterState.Talk;
     }
-
+    /*!
+    Действия при продолжения диалога
+    */
     public void NextMessage()
     {
         if (_state != DialoguePresenterState.Talk || _state == DialoguePresenterState.Choice)
@@ -88,7 +97,6 @@ public class DialogPresenter : MonoBehaviour
 
         GoToChildMessage();
     }
-
     private void GoToChildMessage()
     {
         if (_currentNode.Children.Count == 1)
@@ -104,7 +112,9 @@ public class DialogPresenter : MonoBehaviour
         _dialogueView.ActivateButtons(shortNames);
         _state = DialoguePresenterState.Choice;
     }
-
+    /*!
+    Действия при завершения диалога
+    */
     private void FinishDialogue()
     {
         _dialogueView.StopDialogue();
@@ -119,7 +129,9 @@ public class DialogPresenter : MonoBehaviour
         }
         Next.gameObject.SetActive(false);
     }
-
+    /*!
+    Смена диалоговой ветки
+    */
     public void SwitchBranch(int index)
     {
         Debug.Log("Button clicked " + index.ToString());
@@ -127,13 +139,17 @@ public class DialogPresenter : MonoBehaviour
         _state = DialoguePresenterState.Talk;
         _dialogueView.NextMessage(_currentNode.Message, _currentNode.Name);
     }
-
+    /*!
+    Действие при выборе первого варианта
+    */
     public void Action0()
     {
         Debug.Log("Первая ветка закончена");
         flasher = !flasher;
     }
-
+    /*!
+    Действие при выборе второго варианта
+    */
     public void Action1()
     {
         Debug.Log("Вторая ветка закончена");
