@@ -28,7 +28,6 @@ public class PlayImitation : MonoBehaviour
     инициирует вызов метода вызывающие функцию кнопки */
     public void Update()
     {
-        timeLeft -= Time.deltaTime;
         if ( timeLeft < 0 )
         {
             if (Input.GetKey(KeyCode.Mouse0))
@@ -73,6 +72,10 @@ public class PlayImitation : MonoBehaviour
                     }
                 }
             }
+        }
+        else
+        {
+            timeLeft -= Time.deltaTime;
         }
     }
 }

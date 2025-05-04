@@ -2247,8 +2247,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   damage: 20
-  timeDamage: 0
   isUse: 0
+  timeDamage: 0.3
 --- !u!54 &1559367203
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2425,7 +2425,7 @@ GameObject:
   - component: {fileID: 2015191337}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -6,16 +6,25 @@ public class Swords : MonoBehaviour
 {
     public int id;
     public double damage;
-    public double timeDamage;
     public bool isUse;
+    public float timeDamage;
+    private float timeLeft = 0;
+
+    void Update()
+    {
+        if(timeLeft >= 0) timeLeft -= Time.deltaTime;
+    }
 
     void OnCollisionEnter(Collision collision)
-    {
+    {   
         if(collision.gameObject.tag == "Enemy"){
-            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-            enemy.enemyHealth = enemy.enemyHealth - damage;
-            Debug.Log(enemy.enemyHealth);
-            enemy.Death();
+            if (timeLeft < 0) {
+                Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+                enemy.enemyHealth = enemy.enemyHealth - damage;
+                Debug.Log(enemy.enemyHealth);
+                enemy.Death();
+                timeLeft = timeDamage;
+            }
         }
     }
 }
