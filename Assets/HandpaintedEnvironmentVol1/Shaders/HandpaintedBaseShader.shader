@@ -2,85 +2,71 @@
 // Available at the Unity Asset Store - http://u3d.as/y3X 
 Shader "HandpaintedVol1/HandpaintedBaseShader"
 {
-    Properties
-    {
-        _ColorTint("Color Tint", Color) = (1,1,1,0)
-        _Albedo("Albedo", 2D) = "white" {}
-        [Normal]_Normal("Normal", 2D) = "bump" {}
-        _NormalIntensity("Normal Intensity", Range(-2, 2)) = 1
-        _Metallic("Metallic", 2D) = "white" {}
-        _MetallicIntensity("Metallic Intensity", Range(0, 2)) = 1
-        _Roughness("Roughness", 2D) = "white" {}
-        _RoughnessIntensity("Roughness Intensity", Range(-2, 2)) = 1
-        _Emissive("Emissive", 2D) = "white" {}
-        _EmissiveIntensity("Emissive Intensity", Range(0, 10)) = 0
-    }
+	Properties
+	{
+		_ColorTint("Color Tint", Color) = (1,1,1,0)
+		_Albedo("Albedo", 2D) = "white" {}
+		[Normal]_Normal("Normal", 2D) = "bump" {}
+		_NormalIntensity("Normal Intensity", Range( -2 , 2)) = 1
+		_Metallic("Metallic", 2D) = "white" {}
+		_MetallicIntensity("Metallic Intensity", Range( 0 , 2)) = 1
+		_Roughness("Roughness", 2D) = "white" {}
+		_RoughnessIntensity("Roughness Intensity", Range( -2 , 2)) = 1
+		_Emissive("Emissive", 2D) = "white" {}
+		_EmissiveIntensity("Emissive Intensity", Range( 0 , 10)) = 0
+		[HideInInspector] _texcoord( "", 2D ) = "white" {}
+		[HideInInspector] __dirty( "", Int ) = 1
+	}
 
-    SubShader
-    {
-        Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
+	SubShader
+	{
+		Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
+		Cull Back
+		CGPROGRAM
+		#include "UnityStandardUtils.cginc"
+		#pragma target 3.0
+		#pragma surface surf Standard keepalpha addshadow fullforwardshadows 
 
-        Pass
-        {
-            Name "Unlit"
-            Tags { "LightMode" = "UniversalForward" }
+		struct Input
+		{
+			float2 uv_texcoord;
+		};
 
-            HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+		uniform sampler2D _Normal;
+		uniform float4 _Normal_ST;
+		uniform float _NormalIntensity;
+		uniform sampler2D _Albedo;
+		uniform float4 _Albedo_ST;
+		uniform float4 _ColorTint;
+		uniform sampler2D _Emissive;
+		uniform float4 _Emissive_ST;
+		uniform float _EmissiveIntensity;
+		uniform sampler2D _Metallic;
+		uniform float4 _Metallic_ST;
+		uniform float _MetallicIntensity;
+		uniform sampler2D _Roughness;
+		uniform float4 _Roughness_ST;
+		uniform float _RoughnessIntensity;
+		
+		void surf( Input i , inout SurfaceOutputStandard o )
+		{
+			float2 uv_Normal = i.uv_texcoord * _Normal_ST.xy + _Normal_ST.zw;
+			o.Normal = UnpackScaleNormal( tex2D( _Normal, uv_Normal ), _NormalIntensity );
+			float2 uv_Albedo = i.uv_texcoord * _Albedo_ST.xy + _Albedo_ST.zw;
+			o.Albedo = ( tex2D( _Albedo, uv_Albedo ) * _ColorTint ).rgb;
+			float2 uv_Emissive = i.uv_texcoord * _Emissive_ST.xy + _Emissive_ST.zw;
+			o.Emission = ( tex2D( _Emissive, uv_Emissive ) * _EmissiveIntensity ).rgb;
+			float2 uv_Metallic = i.uv_texcoord * _Metallic_ST.xy + _Metallic_ST.zw;
+			o.Metallic = ( tex2D( _Metallic, uv_Metallic ).r * _MetallicIntensity );
+			float2 uv_Roughness = i.uv_texcoord * _Roughness_ST.xy + _Roughness_ST.zw;
+			o.Smoothness = ( ( 1.0 - tex2D( _Roughness, uv_Roughness ).r ) * _RoughnessIntensity );
+			o.Alpha = 1;
+		}
 
-            // === SRP Batcher compatibility ===
-            CBUFFER_START(UnityPerMaterial)
-                float4 _ColorTint;
-                float _NormalIntensity;
-                float _MetallicIntensity;
-                float _RoughnessIntensity;
-                float _EmissiveIntensity;
-            CBUFFER_END
-
-            TEXTURE2D(_Albedo);       SAMPLER(sampler_Albedo);
-            TEXTURE2D(_Normal);       SAMPLER(sampler_Normal);
-            TEXTURE2D(_Metallic);     SAMPLER(sampler_Metallic);
-            TEXTURE2D(_Roughness);    SAMPLER(sampler_Roughness);
-            TEXTURE2D(_Emissive);     SAMPLER(sampler_Emissive);
-
-            struct Attributes
-            {
-                float4 positionOS : POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            struct Varyings
-            {
-                float4 positionHCS : SV_POSITION;
-                float2 uv : TEXCOORD0;
-            };
-
-            Varyings vert(Attributes IN)
-            {
-                Varyings OUT;
-                OUT.positionHCS = TransformObjectToHClip(IN.positionOS);
-                OUT.uv = IN.uv;
-                return OUT;
-            }
-
-            half4 frag(Varyings IN) : SV_Target
-            {
-                float3 albedo = SAMPLE_TEXTURE2D(_Albedo, sampler_Albedo, IN.uv).rgb * _ColorTint.rgb;
-                float3 emissive = SAMPLE_TEXTURE2D(_Emissive, sampler_Emissive, IN.uv).rgb * _EmissiveIntensity;
-
-                // Unlit final color (Emissive only)
-                half3 color = albedo + emissive;
-
-                return half4(color, 1.0);
-            }
-
-            ENDHLSL
-        }
-    }
-
-    FallBack "Hidden/InternalErrorShader"
+		ENDCG
+	}
+	Fallback "Diffuse"
+	CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
 Version=17700
