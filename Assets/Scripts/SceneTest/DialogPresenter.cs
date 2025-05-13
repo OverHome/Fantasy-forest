@@ -65,6 +65,13 @@ public class DialogPresenter : MonoBehaviour
             }
         }
     }
+
+    public void Inter()
+    {
+        flasher = !flasher;
+        background.SetActive(flasher);
+        StartDialogue();
+    }
     /*!
     Действия при старте диалога
     */
