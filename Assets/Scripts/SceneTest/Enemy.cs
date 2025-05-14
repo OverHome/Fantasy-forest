@@ -26,8 +26,6 @@ public class Enemy : MonoBehaviour
     {
         if(timeLeft >= 0) timeLeft -= Time.deltaTime;
         Attack();
-        Debug.Log(backstep);
-        Debug.Log(this.transform.position);
     }
     public void Death(GameObject obj)
     {
@@ -46,7 +44,6 @@ public class Enemy : MonoBehaviour
             if (timeLeft < 0) {
                 Player player = collision.gameObject.GetComponent<Player>();
                 player.health = player.health - damageEnemy;
-                //Debug.Log(player.health);
                 player.Death();
                 timeLeft = timeDamage;
             }
@@ -67,6 +64,7 @@ public class Enemy : MonoBehaviour
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
         if(playerInSightRange)
         {
+            Debug.Log(player.name);
             transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
             Vector3 targetPostition = new Vector3(player.transform.position.x, 
                                        this.transform.position.y, 
