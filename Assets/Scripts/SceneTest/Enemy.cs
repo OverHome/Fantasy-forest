@@ -64,14 +64,12 @@ public class Enemy : MonoBehaviour
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
         if(playerInSightRange)
         {
-            Debug.Log(player.name);
             transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
             Vector3 targetPostition = new Vector3(player.transform.position.x, 
                                        this.transform.position.y, 
                                        player.transform.position.z );
             this.transform.LookAt(targetPostition);     
         }
-
         if(playerInAttackRange && backstepswitch)
         {
             backstep = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);

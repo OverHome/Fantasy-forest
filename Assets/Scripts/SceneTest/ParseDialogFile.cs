@@ -17,6 +17,7 @@ public static class ParseDialogFile
 
         node.Name = dialogNode.SelectSingleNode("name").InnerText;
         node.Message = dialogNode.SelectSingleNode("message").InnerText;
+        Debug.Log(node.Message);
         XmlNode actionNode = dialogNode.SelectSingleNode("action");
         if(actionNode != null)
             node.ActionId = int.Parse(actionNode.Attributes["id"].Value);
