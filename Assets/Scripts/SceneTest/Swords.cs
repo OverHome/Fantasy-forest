@@ -22,7 +22,7 @@ public class Swords : MonoBehaviour
                 GameObject enemyу = collision.gameObject.transform.parent.gameObject.transform.parent.gameObject;
                 Enemy enemy = enemyу.GetComponent<Enemy>();
                 enemy.enemyHealth = enemy.enemyHealth - damage;
-                Debug.Log(enemy.enemyHealth);
+                //Debug.Log(enemy.enemyHealth);
                 enemy.Death(enemyу);
                 timeLeft = timeDamage;
             }

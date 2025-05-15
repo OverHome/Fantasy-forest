@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     {
         if(health <= 0)
         {
-            Debug.Log("Death");
+            //Debug.Log("Death");
             this.transform.position = new Vector3 (SpawnPoint.position.x, SpawnPoint.position.y, SpawnPoint.position.z);
             health = 100;
         }
